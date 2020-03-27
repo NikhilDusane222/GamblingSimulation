@@ -19,8 +19,7 @@ BetAmount=$STAKE
 maxLimit=$(($BetAmount+$BetAmount*50/100))
 minLimit=$(($BetAmount-$BetAmount*50/100))
 
-
-#Function for bet win or loose
+#Function for win or loose bet
 function betting()
 {
 	for (( count=1; count<=$DAYS; count++ ))
