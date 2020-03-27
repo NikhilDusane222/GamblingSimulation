@@ -5,15 +5,20 @@ printf "Welcome to Gambling Simulation \n"
 #constants
 STAKE=100
 BET=1
-DAYS=20
+DAYS=25
 VALUE=50
 
 #variable
 totalStake=0
-
-BetAmount=$STAKE
+maxLimit=0
+minLimit=0
 
 declare -A Dictionary
+BetAmount=$STAKE
+
+maxLimit=$(($BetAmount+$BetAmount*50/100))
+minLimit=$(($BetAmount-$BetAmount*50/100))
+
 
 #Function for bet win or loose
 function betting()
@@ -39,50 +44,57 @@ function betting()
 			fi
 		done
 		if [[ $BetAmount -eq $minLimit ]]
-      then
-         totalStake=$(($totalStake-$VALUE))
-         Dictionary[$count]=$totalStake
-      else
-         totalStake=$(($totalStake+$VALUE))
-         Dictionary[$count]=$totalStake
-      fi
-      BetAmount=100
+		then
+			totalStake=$(( $totalStake-$VALUE ))
+			Dictionary[$count]=$totalStake
+		else
+			totalStake=$(( $totalStake+$VALUE ))
+			Dictionary[$count]=$totalStake
+		fi
 	done
 	printf "totalStake: $totalStake \n"
 }
 
-
-#function for maximum and mininmum limit
-function Limit()
+#Function for luckiest or unluckiest day
+function luckydayornot()
 {
-	maxLimit=$(($BetAmount+$BetAmount*50/100))
-	minLimit=$(($BetAmount-$BetAmount*50/100))
+	printf "your Stakes: $totalStake \n"
+
+	maximumValue=$(printf "%s\n" ${Dictionary[@]} | sort -n | tail -1 )
+	minimumValue=$(printf "%s\n" ${Dictionary[@]} | sort -n | head -1 )
+
+	printf "maximumValue: $maximumValue \n"
+	printf "minimumValue :$minimumValue \n"
+
+	printf "day: ${!Dictionary[@]}"
+	printf "stake: ${Dictionary[@]}"
+
+	for key in ${!Dictionary[@]}
+	do
+		if [[ ${Dictionary[$key]} -eq $maximumValue ]]
+		then
+			printf "Luckiest day :$key \n"
+		fi
+
+		if [[ ${Dictionary[$key]} -eq $minimumValue ]]
+		then
+			printf "Unluckiest day :$key \n"
+		fi
+	done
 }
 
 betting
-Limit
+luckydayornot
 
-
-printf "your Stakes: $totalStake \n"
-
-maximumValue=$( betting ${Dictionary[@]} )
-minimumValue=$( betting ${Dictionary[@]} )
-
-printf "maximumValue: $maximumValue \n"
-printf "minimumValue :$minimumValue \n"
-
-printf "day: ${!Dictionary[@]}"
-printf "stake: ${Dictionary[@]}"
-
-for key in ${!Dictionary[@]}
-do
-	if [[ ${Dictionary[$key]} -eq $maximumValue ]]
+#Like to continue playing next month or stop Gambling
+if [ $totalStake -gt 0 ]
+then
+	read -p "do you want to countinue 1.Yes 2.No :" toCountinue
+	if [ $toCountinue -eq 1 ]
 	then
-      printf "Luckiest day :$key \n"
+		betting
+		luckydayornot
+	else
+		printf "Game Over \n"
 	fi
-
-   if [[ ${Dictionary[$key]} -eq $minimumValue ]]
-	then
-      printf "Unluckiest day :$key \n"
-   fi
-done
+fi
