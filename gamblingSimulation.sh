@@ -21,3 +21,12 @@ function betting()
 	echo $BetAmount
 }
 betting
+
+#function for maximum and mininmum limit 
+function Limit()
+{
+	maxLimit=$(($BetAmount+$BetAmount*50/100))
+	minLimit=$(($BetAmount-$BetAmount*50/100))
+}
+Limit
+
