@@ -5,15 +5,15 @@ printf "Welcome to Gambling Simulation \n"
 #constants
 STAKE=100
 BET=1
+DAYS=20
+VALUE=50
 
 #variable
-totalWin=0
-totalLoss=0
-winAmount=0
-looseAmount=0
+totalStake=0
 
-read -p "Enter the days : " DAYS
 BetAmount=$STAKE
+
+declare -A Dictionary
 
 #Function for bet win or loose
 function betting()
@@ -38,16 +38,17 @@ function betting()
 				fi
 			fi
 		done
-		if [[ $BetAmount -eq $maxLimit ]]
-		then
-			totalWin=$(($maxLimit-$STAKE))
-			winAmount=$(($winAmount+$totalWin))
-		else
-			totalLoss=$(($STAKE-$minLimit))
-			looseAmount=$(($looseAmount+50))
-		fi
-		echo "day: $count  Amount: $BetAmount  Win: $totalWin  Loss:$totalLoss WinAmount:$winAmount LooseAmount:$looseAmount"
+		if [[ $BetAmount -eq $minLimit ]]
+      then
+         totalStake=$(($totalStake-$VALUE))
+         Dictionary[$count]=$totalStake
+      else
+         totalStake=$(($totalStake+$VALUE))
+         Dictionary[$count]=$totalStake
+      fi
+      BetAmount=100
 	done
+	printf "totalStake: $totalStake \n"
 }
 
 
@@ -60,3 +61,28 @@ function Limit()
 
 betting
 Limit
+
+
+printf "your Stakes: $totalStake \n"
+
+maximumValue=$( betting ${Dictionary[@]} )
+minimumValue=$( betting ${Dictionary[@]} )
+
+printf "maximumValue: $maximumValue \n"
+printf "minimumValue :$minimumValue \n"
+
+printf "day: ${!Dictionary[@]}"
+printf "stake: ${Dictionary[@]}"
+
+for key in ${!Dictionary[@]}
+do
+	if [[ ${Dictionary[$key]} -eq $maximumValue ]]
+	then
+      printf "Luckiest day :$key \n"
+	fi
+
+   if [[ ${Dictionary[$key]} -eq $minimumValue ]]
+	then
+      printf "Unluckiest day :$key \n"
+   fi
+done
