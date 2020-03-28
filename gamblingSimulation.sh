@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-printf "Welcome to Gambling Simulation \n"
+printf "Welcome to the Gambling Simulation \n"
 
 #constants
 STAKE=100
